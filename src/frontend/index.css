@@ -1,0 +1,238 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Fonts ──────────────────────────────────────────────────── */
+@font-face {
+  font-family: "Cabinet Grotesk";
+  src: url("/assets/fonts/CabinetGrotesk-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/assets/fonts/GeistMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Sora";
+  src: url("/assets/fonts/Sora-Variable.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --radius: 0.75rem;
+
+    /* Deep navy / space theme */
+    --background: 0.14 0.025 265;
+    --foreground: 0.93 0.015 265;
+
+    --card: 0.17 0.03 265;
+    --card-foreground: 0.93 0.015 265;
+
+    --popover: 0.19 0.035 265;
+    --popover-foreground: 0.93 0.015 265;
+
+    /* Cyan/teal primary */
+    --primary: 0.72 0.18 195;
+    --primary-foreground: 0.12 0.025 265;
+
+    --secondary: 0.22 0.04 265;
+    --secondary-foreground: 0.85 0.02 265;
+
+    --muted: 0.21 0.035 265;
+    --muted-foreground: 0.55 0.04 265;
+
+    /* Violet accent */
+    --accent: 0.65 0.2 285;
+    --accent-foreground: 0.96 0.01 265;
+
+    --destructive: 0.63 0.22 25;
+    --destructive-foreground: 0.96 0.01 265;
+
+    --border: 0.28 0.04 265;
+    --input: 0.24 0.04 265;
+    --ring: 0.72 0.18 195;
+
+    /* Charts */
+    --chart-1: 0.72 0.18 195;
+    --chart-2: 0.65 0.2 285;
+    --chart-3: 0.73 0.19 145;
+    --chart-4: 0.7 0.19 60;
+    --chart-5: 0.63 0.22 25;
+
+    /* Sidebar */
+    --sidebar: 0.16 0.028 265;
+    --sidebar-foreground: 0.93 0.015 265;
+    --sidebar-primary: 0.72 0.18 195;
+    --sidebar-primary-foreground: 0.12 0.025 265;
+    --sidebar-accent: 0.22 0.04 265;
+    --sidebar-accent-foreground: 0.85 0.02 265;
+    --sidebar-border: 0.28 0.04 265;
+    --sidebar-ring: 0.72 0.18 195;
+
+    /* Custom tokens */
+    --glow-primary: oklch(0.72 0.18 195 / 0.25);
+    --glow-accent: oklch(0.65 0.2 285 / 0.2);
+    --glow-success: oklch(0.73 0.19 145 / 0.2);
+    --gradient-card: linear-gradient(160deg, oklch(0.20 0.035 265) 0%, oklch(0.155 0.028 272) 100%);
+    --gradient-header: linear-gradient(180deg, oklch(0.12 0.025 270) 0%, oklch(0.14 0.025 265) 100%);
+    --noise-opacity: 0.03;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Sora", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ── Scrollbar styling ───────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: oklch(var(--background));
+}
+::-webkit-scrollbar-thumb {
+  background: oklch(var(--border));
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(var(--muted-foreground));
+}
+
+/* ── Custom utility classes ──────────────────────────────────── */
+@layer utilities {
+  .glow-primary {
+    box-shadow: 0 0 20px var(--glow-primary), 0 0 40px oklch(0.72 0.18 195 / 0.1);
+  }
+  .glow-accent {
+    box-shadow: 0 0 20px var(--glow-accent);
+  }
+  .glow-success {
+    box-shadow: 0 0 20px var(--glow-success);
+  }
+
+  .card-gradient {
+    background: var(--gradient-card);
+    border: 1px solid oklch(var(--border));
+    box-shadow:
+      0 1px 0 0 oklch(1 0 0 / 0.05) inset,
+      0 4px 24px oklch(0.05 0 0 / 0.5);
+  }
+
+  .card-gradient:hover {
+    border-color: oklch(var(--border) / 0.8);
+    box-shadow:
+      0 1px 0 0 oklch(1 0 0 / 0.06) inset,
+      0 6px 32px oklch(0.05 0 0 / 0.6);
+  }
+
+  .chain-border {
+    border-left: 2px solid oklch(var(--primary) / 0.4);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .chain-border:hover {
+    border-left-color: oklch(var(--primary));
+    box-shadow: -4px 0 16px var(--glow-primary);
+  }
+
+  .chain-border-accent {
+    border-left: 2px solid oklch(var(--accent) / 0.4);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .chain-border-accent:hover {
+    border-left-color: oklch(var(--accent));
+    box-shadow: -4px 0 16px var(--glow-accent);
+  }
+
+  .text-gradient-primary {
+    background: linear-gradient(135deg, oklch(var(--primary)), oklch(var(--accent)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-mesh {
+    background-image:
+      radial-gradient(ellipse at 20% 0%, oklch(0.72 0.18 195 / 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 10%, oklch(0.65 0.2 285 / 0.07) 0%, transparent 45%),
+      radial-gradient(ellipse at 50% 100%, oklch(0.65 0.2 285 / 0.05) 0%, transparent 60%);
+  }
+
+  .tab-active-glow {
+    box-shadow: 0 2px 12px var(--glow-primary);
+  }
+
+  .progress-gradient [data-state="indeterminate"],
+  .progress-gradient [data-state="loading"] {
+    background: linear-gradient(90deg, oklch(var(--primary)), oklch(var(--accent)));
+  }
+
+  .mono {
+    font-family: "Geist Mono", monospace;
+  }
+
+  .display {
+    font-family: "Cabinet Grotesk", sans-serif;
+  }
+}
+
+/* ── Animations ──────────────────────────────────────────────── */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes progressShimmer {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+.animate-fade-slide-in {
+  animation: fadeSlideIn 0.35s ease forwards;
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+.animate-progress-shimmer {
+  animation: progressShimmer 2s ease-in-out infinite;
+}
