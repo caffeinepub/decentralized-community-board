@@ -31,6 +31,7 @@ import {
   Coins,
   FileText,
   Loader2,
+  Lock,
   LogOut,
   Megaphone,
   PenLine,
@@ -228,6 +229,7 @@ function PostCard({
             }
             onClick={() => onSign(post.id)}
             data-ocid={`board.sign_button.${ocidIndex}`}
+            title={!isLoggedIn ? "Zaloguj się, aby podpisać" : undefined}
           >
             {isMutating ? (
               <Loader2 className="w-3 h-3 mr-1 animate-spin" />
@@ -392,6 +394,9 @@ function VaultCard({
                 disabled={!isLoggedIn || vault.contributedByMe || isMutating}
                 onClick={handleContribute}
                 data-ocid={`vault.contribute_button.${ocidIndex}`}
+                title={
+                  !isLoggedIn ? "Zaloguj się, aby wpłacić tokeny" : undefined
+                }
               >
                 {isMutating ? (
                   <Loader2 className="w-3 h-3 animate-spin" />
@@ -442,10 +447,6 @@ function CreatePostDialog({
   const [category, setCategory] = useState<PostCategory>("Ogłoszenie");
 
   const handleSubmit = () => {
-    if (!isLoggedIn) {
-      toast.error("Zaloguj się, aby dodać post");
-      return;
-    }
     if (!title.trim() || !description.trim()) {
       toast.error("Wypełnij wszystkie pola");
       return;
@@ -458,93 +459,107 @@ function CreatePostDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          className="gap-2 bg-primary/90 hover:bg-primary text-primary-foreground"
-          data-ocid="board.add_button"
-        >
-          <Plus className="w-4 h-4" />
-          Dodaj Post
-        </Button>
-      </DialogTrigger>
-      <DialogContent
-        className="bg-popover border-border shadow-card max-w-md"
-        data-ocid="board.create_post.dialog"
-      >
-        <DialogHeader>
-          <DialogTitle className="font-display text-lg text-foreground flex items-center gap-2">
-            <PenLine className="w-5 h-5 text-primary" />
-            Nowy wpis on-chain
-          </DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 py-2">
-          <div className="space-y-1.5">
-            <Label className="text-sm text-muted-foreground">Tytuł</Label>
-            <Input
-              placeholder="Krótki, zwięzły tytuł..."
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="bg-secondary/50 border-border focus:border-primary/50"
-              data-ocid="board.post_title.input"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-sm text-muted-foreground">Opis</Label>
-            <Textarea
-              placeholder="Szczegółowy opis wpisu lub petycji..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={4}
-              className="bg-secondary/50 border-border focus:border-primary/50 resize-none"
-              data-ocid="board.post_description.textarea"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-sm text-muted-foreground">Kategoria</Label>
-            <Select
-              value={category}
-              onValueChange={(v) => setCategory(v as PostCategory)}
-            >
-              <SelectTrigger
-                className="bg-secondary/50 border-border"
-                data-ocid="board.post_category.select"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-popover border-border">
-                <SelectItem value="Ogłoszenie">Ogłoszenie</SelectItem>
-                <SelectItem value="Petycja">Petycja</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        <DialogFooter className="gap-2">
-          <DialogClose asChild>
-            <Button
-              variant="outline"
-              className="border-border"
-              data-ocid="board.create_post.cancel_button"
-            >
-              Anuluj
-            </Button>
-          </DialogClose>
+    <div className="flex flex-col items-end gap-1">
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
           <Button
-            onClick={handleSubmit}
-            disabled={isMutating}
-            className="bg-primary/90 hover:bg-primary text-primary-foreground gap-2"
-            data-ocid="board.post_submit.button"
+            className="gap-2 bg-primary/90 hover:bg-primary text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!isLoggedIn}
+            title={!isLoggedIn ? "Zaloguj się, aby dodać post" : undefined}
+            data-ocid="board.add_button"
           >
-            {isMutating ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+            {!isLoggedIn ? (
+              <Lock className="w-4 h-4" />
             ) : (
-              <Blocks className="w-4 h-4" />
+              <Plus className="w-4 h-4" />
             )}
-            {isMutating ? "Publikuję..." : "Opublikuj"}
+            Dodaj Post
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </DialogTrigger>
+        <DialogContent
+          className="bg-popover border-border shadow-card max-w-md"
+          data-ocid="board.create_post.dialog"
+        >
+          <DialogHeader>
+            <DialogTitle className="font-display text-lg text-foreground flex items-center gap-2">
+              <PenLine className="w-5 h-5 text-primary" />
+              Nowy wpis on-chain
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <Label className="text-sm text-muted-foreground">Tytuł</Label>
+              <Input
+                placeholder="Krótki, zwięzły tytuł..."
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="bg-secondary/50 border-border focus:border-primary/50"
+                data-ocid="board.post_title.input"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm text-muted-foreground">Opis</Label>
+              <Textarea
+                placeholder="Szczegółowy opis wpisu lub petycji..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={4}
+                className="bg-secondary/50 border-border focus:border-primary/50 resize-none"
+                data-ocid="board.post_description.textarea"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm text-muted-foreground">Kategoria</Label>
+              <Select
+                value={category}
+                onValueChange={(v) => setCategory(v as PostCategory)}
+              >
+                <SelectTrigger
+                  className="bg-secondary/50 border-border"
+                  data-ocid="board.post_category.select"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-popover border-border">
+                  <SelectItem value="Ogłoszenie">Ogłoszenie</SelectItem>
+                  <SelectItem value="Petycja">Petycja</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <DialogClose asChild>
+              <Button
+                variant="outline"
+                className="border-border"
+                data-ocid="board.create_post.cancel_button"
+              >
+                Anuluj
+              </Button>
+            </DialogClose>
+            <Button
+              onClick={handleSubmit}
+              disabled={isMutating}
+              className="bg-primary/90 hover:bg-primary text-primary-foreground gap-2"
+              data-ocid="board.post_submit.button"
+            >
+              {isMutating ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Blocks className="w-4 h-4" />
+              )}
+              {isMutating ? "Publikuję..." : "Opublikuj"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {!isLoggedIn && (
+        <span className="text-xs text-muted-foreground flex items-center gap-1">
+          <Lock className="w-3 h-3" />
+          Wymagane logowanie
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -572,10 +587,6 @@ function CreateVaultDialog({
   const [deadline, setDeadline] = useState("");
 
   const handleSubmit = () => {
-    if (!isLoggedIn) {
-      toast.error("Zaloguj się, aby utworzyć zbiórkę");
-      return;
-    }
     if (!title.trim() || !description.trim() || !target || !deadline) {
       toast.error("Wypełnij wszystkie pola");
       return;
@@ -599,101 +610,117 @@ function CreateVaultDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          className="gap-2 bg-primary/90 hover:bg-primary text-primary-foreground"
-          data-ocid="vault.add_button"
-        >
-          <Plus className="w-4 h-4" />
-          Utwórz Zbiórkę
-        </Button>
-      </DialogTrigger>
-      <DialogContent
-        className="bg-popover border-border shadow-card max-w-md"
-        data-ocid="vault.create.dialog"
-      >
-        <DialogHeader>
-          <DialogTitle className="font-display text-lg text-foreground flex items-center gap-2">
-            <Wallet className="w-5 h-5 text-primary" />
-            Nowa skarbonka on-chain
-          </DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 py-2">
-          <div className="space-y-1.5">
-            <Label className="text-sm text-muted-foreground">Tytuł</Label>
-            <Input
-              placeholder="Nazwa zbiórki..."
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="bg-secondary/50 border-border focus:border-primary/50"
-              data-ocid="vault.title.input"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-sm text-muted-foreground">Opis</Label>
-            <Textarea
-              placeholder="Cel i przeznaczenie zebranych środków..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-              className="bg-secondary/50 border-border focus:border-primary/50 resize-none"
-              data-ocid="vault.description.textarea"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-sm text-muted-foreground">
-              Cel zbiórki (tokeny ICP)
-            </Label>
-            <Input
-              type="number"
-              min={1}
-              placeholder="np. 1000"
-              value={target}
-              onChange={(e) => setTarget(e.target.value)}
-              className="bg-secondary/50 border-border focus:border-primary/50 mono"
-              data-ocid="vault.target.input"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-sm text-muted-foreground">
-              Termin zbiórki
-            </Label>
-            <Input
-              type="date"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-              className="bg-secondary/50 border-border focus:border-primary/50 mono"
-              data-ocid="vault.deadline.input"
-            />
-          </div>
-        </div>
-        <DialogFooter className="gap-2">
-          <DialogClose asChild>
-            <Button
-              variant="outline"
-              className="border-border"
-              data-ocid="vault.cancel_button"
-            >
-              Anuluj
-            </Button>
-          </DialogClose>
+    <div className="flex flex-col items-end gap-1">
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
           <Button
-            onClick={handleSubmit}
-            disabled={isMutating}
-            className="bg-primary/90 hover:bg-primary text-primary-foreground gap-2"
-            data-ocid="vault.create_submit.button"
+            className="gap-2 bg-primary/90 hover:bg-primary text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!isLoggedIn}
+            title={
+              !isLoggedIn ? "Zaloguj się, aby utworzyć zbiórkę" : undefined
+            }
+            data-ocid="vault.add_button"
           >
-            {isMutating ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+            {!isLoggedIn ? (
+              <Lock className="w-4 h-4" />
             ) : (
-              <Coins className="w-4 h-4" />
+              <Plus className="w-4 h-4" />
             )}
-            {isMutating ? "Tworzę..." : "Utwórz"}
+            Utwórz Zbiórkę
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </DialogTrigger>
+        <DialogContent
+          className="bg-popover border-border shadow-card max-w-md"
+          data-ocid="vault.create.dialog"
+        >
+          <DialogHeader>
+            <DialogTitle className="font-display text-lg text-foreground flex items-center gap-2">
+              <Wallet className="w-5 h-5 text-primary" />
+              Nowa skarbonka on-chain
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <Label className="text-sm text-muted-foreground">Tytuł</Label>
+              <Input
+                placeholder="Nazwa zbiórki..."
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="bg-secondary/50 border-border focus:border-primary/50"
+                data-ocid="vault.title.input"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm text-muted-foreground">Opis</Label>
+              <Textarea
+                placeholder="Cel i przeznaczenie zebranych środków..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+                className="bg-secondary/50 border-border focus:border-primary/50 resize-none"
+                data-ocid="vault.description.textarea"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm text-muted-foreground">
+                Cel zbiórki (tokeny ICP)
+              </Label>
+              <Input
+                type="number"
+                min={1}
+                placeholder="np. 1000"
+                value={target}
+                onChange={(e) => setTarget(e.target.value)}
+                className="bg-secondary/50 border-border focus:border-primary/50 mono"
+                data-ocid="vault.target.input"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm text-muted-foreground">
+                Termin zbiórki
+              </Label>
+              <Input
+                type="date"
+                value={deadline}
+                onChange={(e) => setDeadline(e.target.value)}
+                className="bg-secondary/50 border-border focus:border-primary/50 mono"
+                data-ocid="vault.deadline.input"
+              />
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <DialogClose asChild>
+              <Button
+                variant="outline"
+                className="border-border"
+                data-ocid="vault.cancel_button"
+              >
+                Anuluj
+              </Button>
+            </DialogClose>
+            <Button
+              onClick={handleSubmit}
+              disabled={isMutating}
+              className="bg-primary/90 hover:bg-primary text-primary-foreground gap-2"
+              data-ocid="vault.create_submit.button"
+            >
+              {isMutating ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Coins className="w-4 h-4" />
+              )}
+              {isMutating ? "Tworzę..." : "Utwórz"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {!isLoggedIn && (
+        <span className="text-xs text-muted-foreground flex items-center gap-1">
+          <Lock className="w-3 h-3" />
+          Wymagane logowanie
+        </span>
+      )}
+    </div>
   );
 }
 

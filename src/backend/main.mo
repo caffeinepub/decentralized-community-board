@@ -64,12 +64,99 @@ actor {
   };
 
   // ─── State ────────────────────────────────────────────────────────────────
-  var nextPostId : Nat = 0;
-  var nextVaultId : Nat = 0;
-  var contributionCounter : Nat = 0;
+  var nextPostId : Nat = 5;
+  var nextVaultId : Nat = 3;
+  var contributionCounter : Nat = 5;
 
-  let posts = Map.empty<Nat, Post>();
-  let vaults = Map.empty<Nat, Vault>();
+  let demoAuthor : Principal = Principal.fromText("2vxsx-fae");
+
+  let posts = Map.fromIter<Nat, Post>([
+    (0, {
+      id = 0;
+      title = "Planowana przerwa techniczna sieci - 20 marca 2026";
+      description = "Informujemy, ze w dniu 20 marca 2026 (piatek) w godzinach 02:00-06:00 planowana jest przerwa techniczna zwiazana z aktualizacja wezlow sieci ICP. W tym czasie dostep do canistrow moze byc ograniczony. Prosimy o zaplanowanie dzialan z wyprzedzeniem.";
+      category = #Announcement;
+      author = demoAuthor;
+      createdAt = 1741650000000000000;
+      signatureCount = 12;
+    }),
+    (1, {
+      id = 1;
+      title = "Petycja: Dodaj wielojezyczny interfejs do platformy";
+      description = "Zwracamy sie z petycja o wdrozenie pelnego wsparcia dla jezyka polskiego, niemieckiego i ukrainskiego w interfejsie platformy. Obecna wersja anglojezyczna ogranicza dostepnosc dla uzytkownikow z Europy Srodkowo-Wschodniej. Prosimy o podjecie dzialan w tej sprawie.";
+      category = #Petition;
+      author = demoAuthor;
+      createdAt = 1741563600000000000;
+      signatureCount = 47;
+    }),
+    (2, {
+      id = 2;
+      title = "Nowa propozycja standardu tokenow - RFC-07";
+      description = "Publikujemy do konsultacji spolecznych projekt RFC-07 dotyczacy standardu tokenow uzytkowych na Internet Computer. Dokument opisuje interfejs, mechanizmy transferu oraz zarzadzanie uprawnieniami. Zapraszamy do skladania uwag poprzez podpisanie petycji popierajacej lub wnoszącej o zmiany.";
+      category = #Announcement;
+      author = demoAuthor;
+      createdAt = 1741477200000000000;
+      signatureCount = 8;
+    }),
+    (3, {
+      id = 3;
+      title = "Petycja: Transparentnosc w wyborze walidatorow sieci";
+      description = "Zadamy pelnej transparentnosci w procesie wyboru i rotacji wezlow walidujacych transakcje. Spolecznosc powinna miec wglad w kryteria doboru, historie aktywnosci i wynagrodzenia wezlow. Podpisz, jesli zgadzasz sie, ze decentralizacja wymaga jawnosci.";
+      category = #Petition;
+      author = demoAuthor;
+      createdAt = 1741390800000000000;
+      signatureCount = 83;
+    }),
+    (4, {
+      id = 4;
+      title = "Ogłoszenie: Hackathon Web3 - Krakow, kwiecien 2026";
+      description = "Zapraszamy do udzialu w ogolnopolskim hackathonie Web3 organizowanym w Krakowie w dniach 18-20 kwietnia 2026. Tematem przewodnim jest Zdecentralizowane aplikacje na ICP. Pula nagrod: 5000 ICP. Rejestracja otwarta do 31 marca.";
+      category = #Announcement;
+      author = demoAuthor;
+      createdAt = 1741304400000000000;
+      signatureCount = 24;
+    }),
+  ].vals());
+
+  let vaults = Map.fromIter<Nat, Vault>([
+    (0, {
+      id = 0;
+      title = "Fundusz Rozwoju Infrastruktury Wezlow";
+      description = "Zbieramy srodki na zakup i utrzymanie dodatkowych wezlow sieci, ktore zwiekszą przepustowosc i odpornosc platformy. Fundusze zostana przeznaczone wylacznie na sprzet serwerowy i koszty kolokacji.";
+      targetAmount = 2000;
+      currentAmount = 1340;
+      deadline = 1749686400000000000;
+      creator = demoAuthor;
+      createdAt = 1741650000000000000;
+      withdrawn = false;
+      contributorCount = 18;
+    }),
+    (1, {
+      id = 1;
+      title = "Nagrody za audyt bezpieczenstwa smart kontraktow";
+      description = "Program bug-bounty dla audytorow bezpieczenstwa. Kazdy kto znajdzie krytyczna podatnosc w opublikowanych canisterach spolecznosciowych otrzyma nagrode z tej puli. Cel: zachecenie do profesjonalnych audytow kodu on-chain.";
+      targetAmount = 500;
+      currentAmount = 500;
+      deadline = 1746921600000000000;
+      creator = demoAuthor;
+      createdAt = 1741563600000000000;
+      withdrawn = false;
+      contributorCount = 11;
+    }),
+    (2, {
+      id = 2;
+      title = "Wsparcie dla studentow - licencje i kursy Web3";
+      description = "Zbieramy tokeny na dofinansowanie kursow blockchain i licencji narzedzi developerskich dla studentow uczestniczacych w projektach spolecznosciowych. Priorytet: kierunki informatyczne i telekomunikacyjne.";
+      targetAmount = 800;
+      currentAmount = 210;
+      deadline = 1752364800000000000;
+      creator = demoAuthor;
+      createdAt = 1741477200000000000;
+      withdrawn = false;
+      contributorCount = 7;
+    }),
+  ].vals());
+
   let signatures = Map.empty<Text, Bool>();
   let contributions = Map.empty<Nat, Contribution>();
 
